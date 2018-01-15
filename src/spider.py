@@ -8,19 +8,25 @@ from selenium import webdriver
 
 class SpiderTask(object):
     def __init__(self, url, is_article=True):
-        self.driver = None
         self.init_driver()
-        self.content = None
+        self.__content = None
         if is_article:
             self.article_spider(url)
         else:
             pass
 
-    def init_driver(self, use_chrome=False):
+    @staticmethod
+    def init_driver(use_chrome=False):
         if use_chrome:
-            self.driver = webdriver.Chrome()
+            return webdriver.Chrome()
         else:
-            self.driver = webdriver.PhantomJS()
+            return webdriver.PhantomJS()
 
     def article_spider(self, url):
-        pass
+        driver = self.init_driver()
+        driver.get(url)
+        element = driver.find_element_by_xpath(".//*[@class='RichText PostIndex-content av-paddingSide av-card']")
+        self.__content = element.get_attribute('innerHTML')
+
+    def get_content(self):
+        return self.__content
